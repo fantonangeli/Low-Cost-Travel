@@ -1,0 +1,205 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://lowcosttravel/skin/css/main.css" type="text/css"?>
+
+<!DOCTYPE dialog SYSTEM "chrome://lowcosttravel/locale/lowcosttravel.dtd">
+
+<window title="&lowcosttravel.label;" xmlns:html="http://www.w3.org/1999/xhtml"
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+	<stringbundleset id="stringbundleset">
+		<stringbundle id="lowcosttravel-strings"
+			src="chrome://lowcosttravel/locale/lowcosttravel.properties" />
+	</stringbundleset>
+
+	<script type="application/x-javascript" src="js/jquery/jquery.js" />
+	<script type="application/x-javascript" src="js/mootools-1.2.1-core.js" />
+	<script type="application/x-javascript" src="js/php.default.js" />
+	<script type="application/x-javascript" src="js/SpiderBase.js" />
+	<script type="application/x-javascript" src="js/spiders/SideStep.js" />
+	<script type="application/x-javascript" src="js/spiders/GoogleFinanceCurrecyConverter.js" />
+	<script type="application/x-javascript" src="js/SpidersArray.js" />
+	<script type="application/x-javascript" src="js/index.js" />
+
+	<grid flex="1">
+
+		<columns>
+			<column />
+			<column />
+		</columns>
+
+		<rows>
+			<row>
+				<label value="&Departure;:" control="DepartureTB"></label>
+				<label value="&Return;:" control="ReturnTB"></label>
+			</row>
+			<row>
+				<datepicker id="DepartureDP" type="grid" value="2009-04-27" />
+				<datepicker id="ReturnDP" type="grid" value="2009-04-29" />
+
+			</row>
+			<row>
+				<radiogroup id="TravelTypeCtrl" orient="horizontal">
+					<radio id="RoundTripCtrl" label="&RoundTrip;" selected="true"
+						value="RoundTrip" />
+					<radio id="OneWayCtrl" label="&OneWay;" value="OneWay" />
+				</radiogroup>
+			</row>
+			<row>
+				<label value="&OriginAirport;:" control="OriginAirportTB"></label>
+				<label value="&DestinationAirport;:" control="DestinationAirportTB"></label>
+			</row>
+			<row>
+				<textbox id="OriginAirportTB" value="ROM"></textbox>
+				<hbox>
+					<html:span id="DestinationAirportSpan" class="UndefinedAirport">
+						<textbox id="DestinationAirportTB" value="PAR"></textbox>
+					</html:span>
+					<html:span>
+						<checkbox id="FindDestinationCB" label="&FindDestination;"
+							onclick="$('.UndefinedAirport').toggle('slow')" />
+						<html:span class="UndefinedAirport" style="display:none;">
+							&UndefinedAirportFindIn;:
+							<menulist id="DestinationFindEvery">
+								<menupopup>
+									<menuitem label="&UndefinedAirportFindIn.Airports;"
+										value="Airports" />
+									<menuitem label="&UndefinedAirportFindIn.Cities;"
+										value="Cities" selected="true" />
+									<menuitem label="&UndefinedAirportFindIn.AirportsAndCities;"
+										value="AirportsAndCities" />
+								</menupopup>
+							</menulist>
+
+						</html:span>
+					</html:span>
+				</hbox>
+			</row>
+			<row>
+				<hbox>
+					<html:span>
+						<checkbox id="OriginNearbyAirportsCB" label="&NearbyAirports;" />
+					</html:span>
+				</hbox>
+				<hbox>
+					<html:span>
+						<checkbox id="ReturnNearbyAirportsCB" label="&NearbyAirports;" />
+					</html:span>
+				</hbox>
+			</row>
+			<row>
+				<hbox>
+					<label value="&Travelers;:" control="TravelersNumberTB"></label>
+				</hbox>
+				<hbox>
+					<label value="&Currency;:" control="CurrencyML"></label>
+				</hbox>
+			</row>
+			<row>
+				<hbox>
+					<textbox id="TravelersNumberTB" type="number" min="1" max="6" />
+				</hbox>
+				<hbox>
+					<menulist id="CurrencyML">
+						<menupopup datasources="Currencies.sqlite" ref="*"
+							querytype="storage">
+							<template>
+								<query>
+									SELECT * FROM Currencies
+    							</query>
+								<action>
+									<menuitem uri="?" value="?code" label="?name"
+										selected="?default" />
+								</action>
+							</template>
+						</menupopup>
+					</menulist>
+				</hbox>
+			</row>
+			<row>
+				<hbox>
+					<html:span class="UndefinedAirport" style="display:none;">
+						<vbox>
+							<label value="&MaxSpidersNumber;:" control="MaxSpidersNumberCtrl"></label>
+							<textbox id="MaxSpidersNumberCtrl" type="number" min="1"
+								value="10" />
+						</vbox>
+					</html:span>
+				</hbox>
+				<hbox>
+				</hbox>
+			</row>
+			<row>
+				<hbox>
+					<button oncommand="doSearch()" label="&FindButton;" flex="1"
+						class="label" />
+				</hbox>
+				<hbox>
+					<html:span id="SpidersStatusCtrl" style="display:none">
+						<progressmeter id="GeneralProgress" value="0" />
+						<hbox>&Time.Remained;:
+						</hbox>
+						<hbox id="TimeEstimatedValueCtrl" />
+					</html:span>
+				</hbox>
+			</row>
+		</rows>
+
+	</grid>
+
+	<popupset>
+		<popup id="ResultMenu" onpopupshowing="checking(event.target.id);">
+			<menuitem label="&BookIt;"
+				oncommand="UrlInNewSelectedTab(spiders.results[document.getElementById(resultsTreeCtrlId).currentIndex].bookingLink)" />
+		</popup>
+	</popupset>
+
+
+	<tree id="resultsTree" enableColumnDrag="true" flex="1"
+		sortDirection="ascending" sortResource="Price" context="ResultMenu">
+		<treecols>
+			<!--
+				TODO L (al rilascio) levare la colonna id dal tree
+			-->
+			<treecol flex="2" persist="width ordinal hidden" id="Id"
+				label="#" />
+			<splitter class="tree-splitter" />
+			<treecol flex="2" persist="width ordinal hidden" id="Departure"
+				label="&Departure;" onclick="sort(this)" class="sortDirectionIndicator" />
+			<splitter class="tree-splitter" />
+			<treecol flex="2" persist="width ordinal hidden" id="Return"
+				label="&Return;" onclick="sort(this)" class="sortDirectionIndicator" />
+			<splitter class="tree-splitter" />
+			<treecol flex="2" persist="width ordinal hidden" id="DepartureAirports"
+				label="&DepartureAirports;" onclick="sort(this)" class="sortDirectionIndicator" />
+			<splitter class="tree-splitter" />
+			<treecol flex="2" persist="width ordinal hidden" id="ReturnAirports"
+				label="&ReturnAirports;" onclick="sort(this)" class="sortDirectionIndicator" />
+			<splitter class="tree-splitter" />
+			<treecol flex="2" persist="width ordinal hidden" id="DepartureAirline"
+				label="&DepartureAirline;" onclick="sort(this)" class="sortDirectionIndicator" />
+			<splitter class="tree-splitter" />
+			<treecol flex="2" persist="width ordinal hidden" id="ReturnAirline"
+				label="&ReturnAirline;" onclick="sort(this)" class="sortDirectionIndicator" />
+			<splitter class="tree-splitter" />
+			<treecol flex="2" persist="width ordinal hidden" id="Price"
+				label="&Price;" onclick="sort(this)" class="sortDirectionIndicator" />
+			<splitter class="tree-splitter" />
+			<treecol flex="2" persist="width ordinal hidden" id="Site"
+				label="&Site;" onclick="sort(this)" class="sortDirectionIndicator" />
+			<splitter class="tree-splitter" />
+			<treecol flex="2" persist="width ordinal hidden" id="DepartureStops"
+				label="&DepartureStops;" onclick="sort(this)" class="sortDirectionIndicator" />
+			<splitter class="tree-splitter" />
+			<treecol flex="2" persist="width ordinal hidden" id="ReturnStops"
+				label="&ReturnStops;" onclick="sort(this)" class="sortDirectionIndicator" />
+			<splitter class="tree-splitter" />
+			<treecol flex="2" persist="width ordinal hidden" id="BookingLink"
+				label="&BookingLink;" hidden="true" />
+		</treecols>
+		<treechildren />
+	</tree>
+
+
+	<hbox id="FramesParent" height="500px;" style="display:none;" />
+</window>
+

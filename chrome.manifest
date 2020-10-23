@@ -1,0 +1,5 @@
+content	lowcosttravel	content/
+locale	lowcosttravel	it-IT	locale/it-IT/
+skin	lowcosttravel	classic/1.0	skin/
+overlay	chrome://browser/content/browser.xul	chrome://lowcosttravel/content/firefoxOverlay.xul
+style	chrome://global/content/customizeToolbar.xul	chrome://lowcosttravel/skin/overlay.css

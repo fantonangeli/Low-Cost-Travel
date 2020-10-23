@@ -1,0 +1,29 @@
+<!ENTITY lowcosttravel.label "Low Cost Travel">
+<!ENTITY FindButton "Cerca">
+<!ENTITY Departure "Partenza">
+<!ENTITY Return "Ritorno">
+<!ENTITY OriginAirport "Aeroporto di partenza">
+<!ENTITY DestinationAirport "Aeroporto di arrivo">
+<!ENTITY DepartureAirports "Aeroporti partenza">
+<!ENTITY ReturnAirports "Aeroporti ritorno">
+<!ENTITY NearbyAirports "Aeroporti nelle vicinanze">
+<!ENTITY Price "Prezzo">
+<!ENTITY Travelers "Viaggiatori">
+<!ENTITY NonStop "Preferisci voli nonstop">
+<!ENTITY BookingLink "Link">
+<!ENTITY DepartureAirline "Compagnia Andata">
+<!ENTITY ReturnAirline "Compagnia Ritorno">
+<!ENTITY Site "Sito">
+<!ENTITY BookIt "Prenota">
+<!ENTITY Currency "Moneta">
+<!ENTITY DepartureStops "Fermate andata">
+<!ENTITY ReturnStops "Fermate ritorno">
+<!ENTITY FindDestination "Cercami una destinazione">
+<!ENTITY OneWay "Sola andata">
+<!ENTITY RoundTrip "Andata e ritorno">
+<!ENTITY Time.Remained "Tempo rimanente">
+<!ENTITY MaxSpidersNumber "Numero massimo di spider alla volta" >
+<!ENTITY UndefinedAirportFindIn "Cerca in" >
+<!ENTITY UndefinedAirportFindIn.Airports "Aeroporti" >
+<!ENTITY UndefinedAirportFindIn.Cities "Città" >
+<!ENTITY UndefinedAirportFindIn.AirportsAndCities "Aeroporti e città" >
